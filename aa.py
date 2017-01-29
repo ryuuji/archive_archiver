@@ -4,10 +4,6 @@
 デジタルアーカイブアーカイブツール
 """
 
-__copyright__ = "Copyright (C) 2016 Ryuuji Yoshimoto"
-__author__ = "Ryuuji Yoshimoto <ryuuji@calil.jp>"
-__licence__ = "MIT"
-
 import requests
 import urlparse
 import math
@@ -17,8 +13,12 @@ from bs4 import BeautifulSoup
 import concurrent.futures
 from PyPDF2 import PdfFileMerger
 
+__copyright__ = "Copyright (C) 2016 Ryuuji Yoshimoto"
+__author__ = "Ryuuji Yoshimoto <ryuuji@calil.jp>"
+__licence__ = "MIT"
+
 # トップページURL
-index_url = 'https://trc-adeac.trc.co.jp/Html/BookletView/2120605100/2120605100100040/ygcsonshi01/'
+index_url = 'https://trc-adeac.trc.co.jp/Html/BookletView/2120605100/2120605100100010/nktgshishi0101/'
 
 
 # インデックスページをロード
@@ -51,16 +51,16 @@ def load_deepzoom(url):
         face.paste(im, (x * tile_size, y * tile_size))
         print tile_url
         x += 1
-        if x >= math.ceil(width / tile_size):
+        if x > math.ceil(width / tile_size):
             x = 0
             y += 1
-        if y >= math.ceil(height / tile_size):
+        if y > math.ceil(height / tile_size):
             break
     return url, face
 
 
 # 並列処理でデータを取得
-tile_urls = load_index(index_url)
+tile_urls = load_index(index_url)[0:4]
 result_images = [None] * len(tile_urls)
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=30)
 futures = [executor.submit(load_deepzoom, u) for u in tile_urls]
